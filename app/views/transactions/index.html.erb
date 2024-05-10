@@ -5,25 +5,48 @@
 <%transactions = Transaction.all %>
 <ol>
 <%for transaction in transactions %>
-
+  <%sender = User.find_by({"id" => transaction["from_user_id"]})%>
   <%recipient = User.find_by({"id" => transaction["to_user_id"]})%>
   <%amount = transaction["amount"] %>
-  <%senders = User.find_by({"id" => transaction["from_user_id"]})%>
-  
+ 
+ <% if transaction["id"]== 1 %>
+<li> Initial coin offering: <%= amount%> to <%= recipient["name"]%>  </li> 
+ <% else %>
+<li> <%= amount%> KC from <%= sender["name"] %> to <%= recipient["name"] %> </li>
 
-<li> <%= transaction["from_user_id"]%> </li> 
+ <% end %> 
 
 <% end %>
 </ol>
 
 
+  
 <!-- Step 2: Calculate and display the balances -->
 
-<!-- 
-Expected balances:
-Balance for Brian: 1348 KC
-Balance for Ben: 2516 KC
-Balance for Evan: 1164 KC
-Balance for Anthony: 1456 KC
-Balance for Krystina: 3516 KC 
--->
+<%users = User.all%>
+<%transactions = Transaction.all %>
+
+
+<%for user in users
+    name = user["name"]
+    id = user["id"]
+    total_balance = 0 %>
+  
+    <%for row in transactions 
+        if row["to_user_id"]== id
+        total_balance = total_balance + row["amount"]  
+        end %>
+    <%end%>
+
+    <%for row in transactions 
+        if row["from_user_id"]== id
+        total_balance = total_balance - row["amount"]  
+        end %>
+    <%end%>
+
+  <ol>
+  <il>  <%= name%>'s KelloggCoin balance is <%= total_balance%>  </il>
+  </ol>
+
+
+<%end%>
